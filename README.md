@@ -85,7 +85,7 @@ Make sure you have the following installed on your machine:
 **Cloning the Repository**
 
 ```bash
-git clone https://github.com/fardin98/converso.git
+git clone https://github.com/FARDIN98/converso
 cd converso
 ```
 

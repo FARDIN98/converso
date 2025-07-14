@@ -4,6 +4,8 @@ import { addBookmark } from "@/lib/actions/companion.actions";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
+import toast from "react-hot-toast";
 
 interface CompanionCardProps {
   id: string;
@@ -25,26 +27,49 @@ const CompanionCard = ({
   bookmarked,
 }: CompanionCardProps) => {
   const pathname = usePathname();
+  const [isLoading, setIsLoading] = useState(false);
+  const [isBookmarked, setIsBookmarked] = useState(bookmarked);
+  const [showSuccessAnimation, setShowSuccessAnimation] = useState(false);
+  
   const handleBookmark = async () => {
-    if (bookmarked) {
-      await removeBookmark(id, pathname);
-    } else {
-      await addBookmark(id, pathname);
+    setIsLoading(true);
+    try {
+      if (isBookmarked) {
+        await removeBookmark(id, pathname);
+        setIsBookmarked(false);
+        toast.success("Bookmark removed!");
+      } else {
+        await addBookmark(id, pathname);
+        setIsBookmarked(true);
+        setShowSuccessAnimation(true);
+        setTimeout(() => setShowSuccessAnimation(false), 300);
+        toast.success("Bookmarked successfully!");
+      }
+    } catch {
+      toast.error("Something went wrong!");
+    } finally {
+      setIsLoading(false);
     }
   };
   return (
     <article className="companion-card" style={{ backgroundColor: color }}>
       <div className="flex justify-between items-center">
         <div className="subject-badge">{subject}</div>
-        <button className="companion-bookmark" onClick={handleBookmark}>
-          <Image
-            src={
-              bookmarked ? "/icons/bookmark-filled.svg" : "/icons/bookmark.svg"
-            }
-            alt="bookmark"
-            width={12.5}
-            height={15}
-          />
+        <button 
+          className={`companion-bookmark ${isLoading ? 'opacity-50' : ''} ${showSuccessAnimation ? 'bookmark-success' : ''}`} 
+          onClick={handleBookmark}
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <div className="animate-spin w-3 h-3 border border-gray-300 rounded-full border-t-transparent" />
+          ) : (
+            <Image
+              src={isBookmarked ? "/icons/bookmark-filled.svg" : "/icons/bookmark.svg"}
+              alt="bookmark"
+              width={12.5}
+              height={15}
+            />
+          )}
         </button>
       </div>
 

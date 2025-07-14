@@ -141,16 +141,16 @@ export const newCompanionPermissions = async () => {
 export const addBookmark = async (companionId: string, path: string) => {
   const { userId } = await auth();
   if (!userId) return;
+  
   const supabase = createSupabaseClient();
   const { data, error } = await supabase.from("bookmarks").insert({
     companion_id: companionId,
     user_id: userId,
   });
   if (error) {
+    console.error('addBookmark error:', error);
     throw new Error(error.message);
   }
-  // Revalidate the path to force a re-render of the page
-
   revalidatePath(path);
   return data;
 };
@@ -158,6 +158,7 @@ export const addBookmark = async (companionId: string, path: string) => {
 export const removeBookmark = async (companionId: string, path: string) => {
   const { userId } = await auth();
   if (!userId) return;
+  
   const supabase = createSupabaseClient();
   const { data, error } = await supabase
     .from("bookmarks")
@@ -165,6 +166,7 @@ export const removeBookmark = async (companionId: string, path: string) => {
     .eq("companion_id", companionId)
     .eq("user_id", userId);
   if (error) {
+    console.error('removeBookmark error:', error);
     throw new Error(error.message);
   }
   revalidatePath(path);
@@ -174,13 +176,38 @@ export const removeBookmark = async (companionId: string, path: string) => {
 // It's almost the same as getUserCompanions, but it's for the bookmarked companions
 export const getBookmarkedCompanions = async (userId: string) => {
   const supabase = createSupabaseClient();
-  const { data, error } = await supabase
-    .from("bookmarks")
-    .select(`companions:companion_id (*)`) // Notice the (*) to get all the companion data
-    .eq("user_id", userId);
-  if (error) {
-    throw new Error(error.message);
+  
+  try {
+    // First get the bookmarked companion IDs
+    const { data: bookmarks, error: bookmarkError } = await supabase
+      .from("bookmarks")
+      .select("companion_id")
+      .eq("user_id", userId);
+      
+    if (bookmarkError) {
+      console.error('Bookmark error:', bookmarkError);
+      return [];
+    }
+    
+    if (!bookmarks || bookmarks.length === 0) {
+      return [];
+    }
+    
+    // Then get the companions data
+    const companionIds = bookmarks.map(bookmark => bookmark.companion_id);
+    const { data: companions, error: companionError } = await supabase
+      .from("companions")
+      .select("*")
+      .in("id", companionIds);
+      
+    if (companionError) {
+      console.error('Companion error:', companionError);
+      return [];
+    }
+    
+    return companions || [];
+  } catch (error) {
+    console.error('getBookmarkedCompanions error:', error);
+    return [];
   }
-  // We don't need the bookmarks data, so we return only the companions
-  return data.map(({ companions }) => companions);
 };

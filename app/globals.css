@@ -152,7 +152,16 @@ body {
     @apply bg-black text-white rounded-4xl text-sm px-2 py-1 capitalize;
   }
   .companion-bookmark {
-    @apply px-2 bg-black rounded-4xl flex items-center h-full aspect-square cursor-pointer;
+    @apply px-2 bg-black rounded-4xl flex items-center h-full aspect-square cursor-pointer transition-all duration-200 ease-in-out;
+  }
+  .companion-bookmark:hover {
+    @apply transform scale-110;
+  }
+  .companion-bookmark:active {
+    @apply transform scale-95;
+  }
+  .companion-bookmark:disabled {
+    @apply cursor-not-allowed;
   }
   .input {
     @apply !border-black !bg-white focus-visible:!ring-0 focus-visible:!border-black !w-full;
@@ -223,4 +232,117 @@ body {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+}
+
+/* Bookmark Animation */
+@keyframes bookmarkPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+.bookmark-success {
+  animation: bookmarkPulse 0.3s ease;
+}
+
+/* Navigation Items Styles */
+.nav-item {
+  @apply px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ease-in-out;
+  @apply relative overflow-hidden;
+  @apply border border-transparent;
+  @apply focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2;
+}
+
+.nav-item-active {
+  @apply text-primary bg-primary/10 border-primary/20;
+  @apply shadow-sm;
+}
+
+.nav-item-inactive {
+  @apply text-muted-foreground;
+}
+
+.nav-item:hover {
+  @apply transform scale-105 shadow-md;
+  @apply bg-accent/50 text-accent-foreground;
+  @apply border-accent/30;
+}
+
+.nav-item:active {
+  @apply transform scale-95;
+  @apply bg-accent/70;
+}
+
+.nav-item-hovered {
+  @apply bg-accent/30;
+}
+
+/* Mobile responsive navigation */
+@media (max-width: 640px) {
+  .nav-item {
+    @apply px-3 py-1.5 text-xs;
+  }
+}
+
+/* Hamburger Menu Styles */
+.hamburger-btn {
+  @apply p-2 rounded-lg transition-all duration-200 ease-in-out;
+  @apply hover:bg-accent/50 focus:outline-none focus:ring-2 focus:ring-primary;
+  @apply flex flex-col justify-center items-center w-10 h-10;
+}
+
+.hamburger-line {
+  @apply w-6 h-0.5 bg-foreground transition-all duration-300 ease-in-out;
+  @apply my-0.5;
+  transform-origin: center;
+}
+
+.hamburger-line-1-open {
+  transform: translateY(6px) rotate(45deg);
+}
+
+.hamburger-line-2-open {
+  transform: scale(0);
+  opacity: 0;
+}
+
+.hamburger-line-3-open {
+  transform: translateY(-6px) rotate(-45deg);
+}
+
+/* Mobile Menu Dropdown */
+.mobile-menu {
+  @apply absolute top-full right-0 mt-2 w-48;
+  @apply bg-background border border-border rounded-lg shadow-lg;
+  @apply z-50;
+  animation: mobileMenuSlideIn 0.2s ease-out;
+}
+
+.mobile-nav-item {
+  @apply block px-4 py-2 text-sm;
+  @apply transition-colors duration-150;
+}
+
+.mobile-nav-item-active {
+  @apply text-primary font-semibold;
+}
+
+.mobile-nav-item-inactive {
+  @apply text-muted-foreground hover:text-foreground hover:bg-accent/50;
+}
+
+@keyframes mobileMenuSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Ensure mobile menu positioning */
+.md\:hidden {
+  @apply relative;
 }
