@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, memo, useMemo, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { getUserAnalytics, getSessionTrends } from '@/lib/actions/analytics.actions';
@@ -52,30 +52,74 @@ const COLORS = {
     business: '#EC4899'
 };
 
-const AnalyticsDashboard = ({ userId }: AnalyticsDashboardProps) => {
+const AnalyticsDashboard = memo(({ userId }: AnalyticsDashboardProps) => {
     const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
     const [trends, setTrends] = useState<TrendData[]>([]);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const fetchAnalytics = async () => {
-            try {
-                setLoading(true);
-                const [analyticsData, trendsData] = await Promise.all([
-                    getUserAnalytics(userId),
-                    getSessionTrends(userId, 7)
-                ]);
-                setAnalytics(analyticsData);
-                setTrends(trendsData);
-            } catch (error) {
-                console.error('Error fetching analytics:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchAnalytics();
+    const fetchAnalytics = useCallback(async () => {
+        try {
+            setLoading(true);
+            const [analyticsData, trendsData] = await Promise.all([
+                getUserAnalytics(userId),
+                getSessionTrends(userId, 7)
+            ]);
+            setAnalytics(analyticsData);
+            setTrends(trendsData);
+        } catch (error) {
+            console.error('Error fetching analytics:', error);
+        } finally {
+            setLoading(false);
+        }
     }, [userId]);
+
+    useEffect(() => {
+        fetchAnalytics();
+    }, [fetchAnalytics]);
+
+    // Prepare data for charts with memoization - moved to top level
+    const subjectData: SubjectData[] = useMemo(() => {
+        if (!analytics) return [];
+        return Object.entries(analytics.subjectStats).map(([subject, count]) => ({
+            subject: subject.charAt(0).toUpperCase() + subject.slice(1),
+            sessions: count,
+            fill: COLORS[subject as keyof typeof COLORS] || '#6B7280'
+        }));
+    }, [analytics]);
+
+    const stats: StatData[] = useMemo(() => {
+        if (!analytics) return [];
+        return [
+            {
+                title: "Total Sessions",
+                value: analytics.totalSessions,
+                description: "Learning sessions completed",
+                icon: TrendingUp,
+                change: `+${analytics.recentSessions} this week`
+            },
+            {
+                title: "Companions Created",
+                value: analytics.totalCompanions,
+                description: "AI tutors you've created",
+                icon: BookOpen,
+                change: "Your teaching contributions"
+            },
+            {
+                title: "Bookmarked",
+                value: analytics.totalBookmarks,
+                description: "Saved companions",
+                icon: Bookmark,
+                change: "Quick access favorites"
+            },
+            {
+                title: "Recent Activity",
+                value: analytics.recentSessions,
+                description: "Sessions this week",
+                icon: BarChart3,
+                change: "Keep up the momentum!"
+            }
+        ];
+    }, [analytics]);
 
     if (loading) {
         return (
@@ -157,44 +201,6 @@ const AnalyticsDashboard = ({ userId }: AnalyticsDashboardProps) => {
             </div>
         );
     }
-
-    // Prepare data for charts
-    const subjectData: SubjectData[] = Object.entries(analytics.subjectStats).map(([subject, count]) => ({
-        subject: subject.charAt(0).toUpperCase() + subject.slice(1),
-        sessions: count,
-        fill: COLORS[subject as keyof typeof COLORS] || '#6B7280'
-    }));
-
-    const stats: StatData[] = [
-        {
-            title: "Total Sessions",
-            value: analytics.totalSessions,
-            description: "Learning sessions completed",
-            icon: TrendingUp,
-            change: `+${analytics.recentSessions} this week`
-        },
-        {
-            title: "Companions Created",
-            value: analytics.totalCompanions,
-            description: "AI tutors you've created",
-            icon: BookOpen,
-            change: "Your teaching contributions"
-        },
-        {
-            title: "Bookmarked",
-            value: analytics.totalBookmarks,
-            description: "Saved companions",
-            icon: Bookmark,
-            change: "Quick access favorites"
-        },
-        {
-            title: "Recent Activity",
-            value: analytics.recentSessions,
-            description: "Sessions this week",
-            icon: BarChart3,
-            change: "Keep up the momentum!"
-        }
-    ];
 
     return (
         <div className="space-y-6">
@@ -382,6 +388,8 @@ const AnalyticsDashboard = ({ userId }: AnalyticsDashboardProps) => {
             </Card>
         </div>
     );
-};
+});
+
+AnalyticsDashboard.displayName = 'AnalyticsDashboard';
 
 export default AnalyticsDashboard;

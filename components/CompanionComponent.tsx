@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 'use client';
 
-import {useEffect, useRef, useState} from 'react'
+import {useEffect, useRef, useState, memo, useCallback} from 'react'
 import {cn, configureAssistant, getSubjectColor} from "@/lib/utils";
 import {vapi} from "@/lib/vapi.sdk";
 import Image from "next/image";
@@ -15,7 +16,7 @@ enum CallStatus {
     FINISHED = 'FINISHED',
 }
 
-const CompanionComponent = ({ companionId, subject, topic, name, userName, userImage, style, voice }: CompanionComponentProps) => {
+const CompanionComponent = memo(({ companionId, subject, topic, name, userName, userImage, style, voice }: CompanionComponentProps) => {
     const [callStatus, setCallStatus] = useState<CallStatus>(CallStatus.INACTIVE);
     const [isSpeaking, setIsSpeaking] = useState(false);
     const [isMuted, setIsMuted] = useState(false);
@@ -68,15 +69,15 @@ const CompanionComponent = ({ companionId, subject, topic, name, userName, userI
             vapi.off('speech-start', onSpeechStart);
             vapi.off('speech-end', onSpeechEnd);
         }
-    }, []);
+    }, [companionId]);
 
-    const toggleMicrophone = () => {
+    const toggleMicrophone = useCallback(() => {
         const isMuted = vapi.isMuted();
         vapi.setMuted(!isMuted);
         setIsMuted(!isMuted)
-    }
+    }, []);
 
-    const handleCall = async () => {
+    const handleCall = useCallback(async () => {
         setCallStatus(CallStatus.CONNECTING)
 
         const assistantOverrides = {
@@ -87,12 +88,12 @@ const CompanionComponent = ({ companionId, subject, topic, name, userName, userI
 
         // @ts-expect-error
         vapi.start(configureAssistant(voice, style), assistantOverrides)
-    }
+    }, [subject, topic, style, voice]);
 
-    const handleDisconnect = () => {
+    const handleDisconnect = useCallback(() => {
         setCallStatus(CallStatus.FINISHED)
         vapi.stop()
-    }
+    }, []);
 
     return (
         <section className="flex flex-col h-[70vh]">
@@ -168,7 +169,9 @@ const CompanionComponent = ({ companionId, subject, topic, name, userName, userI
                 <div className="transcript-fade" />
             </section>
         </section>
-    )
-}
+    );
+});
+
+CompanionComponent.displayName = 'CompanionComponent';
 
 export default CompanionComponent

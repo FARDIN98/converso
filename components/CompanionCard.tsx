@@ -4,7 +4,7 @@ import { addBookmark } from "@/lib/actions/companion.actions";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useState, memo } from "react";
 import toast from "react-hot-toast";
 import LoadingSpinner from "@/components/LoadingSpinner";
 
@@ -18,7 +18,7 @@ interface CompanionCardProps {
   bookmarked: boolean;
 }
 
-const CompanionCard = ({
+const CompanionCard = memo(({
   id,
   name,
   topic,
@@ -93,6 +93,8 @@ const CompanionCard = ({
       </Link>
     </article>
   );
-};
+});
+
+CompanionCard.displayName = 'CompanionCard';
 
 export default CompanionCard;

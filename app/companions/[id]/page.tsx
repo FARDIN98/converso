@@ -3,7 +3,18 @@ import {currentUser} from "@clerk/nextjs/server";
 import {redirect} from "next/navigation";
 import {getSubjectColor} from "@/lib/utils";
 import Image from "next/image";
-import CompanionComponent from "@/components/CompanionComponent";
+import dynamic from "next/dynamic";
+
+const CompanionComponent = dynamic(() => import("@/components/CompanionComponent"), {
+    loading: () => (
+        <div className="companion-chat-container">
+            <div className="h-96 bg-gray-200 animate-pulse rounded-lg flex items-center justify-center">
+                <div className="text-gray-500">Loading companion...</div>
+            </div>
+        </div>
+    ),
+    ssr: false
+});
 
 interface CompanionSessionPageProps {
     params: Promise<{ id: string}>;
@@ -14,7 +25,7 @@ const CompanionSession = async ({ params }: CompanionSessionPageProps) => {
     const companion = await getCompanion(id);
     const user = await currentUser();
 
-    const { name, subject, title, topic, duration } = companion;
+    const { name, subject, topic, duration } = companion;
 
     if(!user) redirect('/sign-in');
     if(!name) redirect('/companions')
