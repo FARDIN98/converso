@@ -8,6 +8,7 @@ const navItems = [
   { name: "Home", href: "/" },
   { name: "Companions", href: "/companions" },
   { name: "My Journey", href: "/my-journey" },
+  { name: "Analytics", href: "/analytics" },
 ];
 
 const NavItems = () => {
