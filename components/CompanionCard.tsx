@@ -6,6 +6,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 interface CompanionCardProps {
   id: string;
@@ -61,7 +62,7 @@ const CompanionCard = ({
           disabled={isLoading}
         >
           {isLoading ? (
-            <div className="animate-spin w-3 h-3 border border-gray-300 rounded-full border-t-transparent" />
+            <LoadingSpinner size="sm" className="w-3 h-3" />
           ) : (
             <Image
               src={isBookmarked ? "/icons/bookmark-filled.svg" : "/icons/bookmark.svg"}
