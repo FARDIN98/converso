@@ -22,7 +22,7 @@ interface CompanionsListProps {
     classNames?: string;
 }
 
-const CompanionRow = memo(({ index, style, data }: { index: number; style: any; data: Companion[] }) => {
+const CompanionRow = memo(({ index, style, data }: { index: number; style: unknown; data: Companion[] }) => {
     const companion = data[index];
     const { id, subject, name, topic, duration } = companion;
     
