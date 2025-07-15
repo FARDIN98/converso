@@ -1,9 +1,12 @@
+"use client";
+
 import {getCompanion} from "@/lib/actions/companion.actions";
-import {currentUser} from "@clerk/nextjs/server";
-import {redirect} from "next/navigation";
+import {useUser} from "@clerk/nextjs";
+import {useRouter} from "next/navigation";
 import {getSubjectColor} from "@/lib/utils";
 import Image from "next/image";
 import dynamic from "next/dynamic";
+import {useEffect, useState} from "react";
 
 const CompanionComponent = dynamic(() => import("@/components/CompanionComponent"), {
     loading: () => (
@@ -16,19 +19,77 @@ const CompanionComponent = dynamic(() => import("@/components/CompanionComponent
     ssr: false
 });
 
+interface Companion {
+    id: string;
+    name: string;
+    subject: string;
+    topic: string;
+    duration: number;
+    description?: string;
+    instructions?: string;
+    seed?: string;
+    src?: string;
+    userId?: string;
+    userName?: string;
+    createdAt?: Date;
+    updatedAt?: Date;
+    _count?: {
+        messages: number;
+    };
+}
+
 interface CompanionSessionPageProps {
     params: Promise<{ id: string}>;
 }
 
-const CompanionSession = async ({ params }: CompanionSessionPageProps) => {
-    const { id } = await params;
-    const companion = await getCompanion(id);
-    const user = await currentUser();
+const CompanionSession = ({ params }: CompanionSessionPageProps) => {
+    const { user } = useUser();
+    const router = useRouter();
+    const [companion, setCompanion] = useState<Companion | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [id, setId] = useState<string>('');
+
+    useEffect(() => {
+        const getParamsAndData = async () => {
+            try {
+                const resolvedParams = await params;
+                const companionId = resolvedParams.id;
+                setId(companionId);
+                
+                const companionData = await getCompanion(companionId);
+                setCompanion(companionData);
+            } catch (error) {
+                console.error('Error fetching companion:', error);
+                router.push('/companions');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        getParamsAndData();
+    }, [params, router]);
+
+    useEffect(() => {
+        if (!user && !loading) {
+            router.push('/sign-in');
+        }
+        if (companion && !companion.name) {
+            router.push('/companions');
+        }
+    }, [user, companion, loading, router]);
+
+    if (loading || !companion || !user) {
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900 mx-auto"></div>
+                    <p className="mt-4 text-gray-600">Loading companion...</p>
+                </div>
+            </div>
+        );
+    }
 
     const { name, subject, topic, duration } = companion;
-
-    if(!user) redirect('/sign-in');
-    if(!name) redirect('/companions')
 
     return (
         <main>
