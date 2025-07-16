@@ -1,0 +1,19 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`LoadingSpinner Component > Snapshot Tests > should match snapshot for default props 1`] = `
+<div
+  class="animate-spin rounded-full border-2 border-gray-300 border-t-primary w-6 h-6"
+/>
+`;
+
+exports[`LoadingSpinner Component > Snapshot Tests > should match snapshot for large size with custom class 1`] = `
+<div
+  class="animate-spin rounded-full border-2 border-gray-300 border-t-primary w-8 h-8 text-blue-500"
+/>
+`;
+
+exports[`LoadingSpinner Component > Snapshot Tests > should match snapshot for small size 1`] = `
+<div
+  class="animate-spin rounded-full border-2 border-gray-300 border-t-primary w-4 h-4"
+/>
+`;
