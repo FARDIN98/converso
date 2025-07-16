@@ -1,56 +1,104 @@
+/**
+ * Global Styles for Converso Application
+ * 
+ * This file contains all global CSS styles, custom properties, and Tailwind CSS
+ * configurations for the Converso real-time AI teaching platform.
+ * 
+ * Structure:
+ * - Font imports and external dependencies
+ * - CSS custom properties (design tokens)
+ * - Theme configurations for light/dark modes
+ * - Base styles and resets
+ * - Component utility classes
+ * 
+ * @file Global stylesheet for the entire application
+ */
+
+/* Import Google Fonts - Bricolage Grotesque for modern typography */
 @import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap");
+/* Import Tailwind CSS framework for utility-first styling */
 @import "tailwindcss";
+/* Import Tailwind CSS animations for enhanced UI interactions */
 @import "tw-animate-css";
 
+/* Custom variant for dark mode styling */
 @custom-variant dark (&:is(.dark *));
 
+/**
+ * Root CSS Custom Properties (Design Tokens)
+ * 
+ * Defines the core design system variables used throughout the application.
+ * These custom properties enable consistent theming and easy maintenance.
+ * Uses OKLCH color space for better color consistency and accessibility.
+ */
 :root {
-  --primary: #fe5933;
+  /* Brand Colors */
+  --primary: #fe5933;           /* Primary brand color - orange */
 
-  --cta: #2c2c2c;
-  --cta-gold: #fccc41;
-  --radius: 0.625rem;
-  --background: #f9f9f9;
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  /* Call-to-Action Colors */
+  --cta: #2c2c2c;              /* CTA background - dark gray */
+  --cta-gold: #fccc41;         /* CTA accent - gold */
+  
+  /* Layout & Spacing */
+  --radius: 0.625rem;          /* Default border radius (10px) */
+  
+  /* Light Theme Colors (using OKLCH color space) */
+  --background: #f9f9f9;       /* Main background color */
+  --foreground: oklch(0.145 0 0);              /* Primary text color */
+  --card: oklch(1 0 0);                        /* Card background */
+  --card-foreground: oklch(0.145 0 0);         /* Card text color */
+  --popover: oklch(1 0 0);                     /* Popover background */
+  --popover-foreground: oklch(0.145 0 0);      /* Popover text color */
+  --primary-foreground: oklch(0.985 0 0);      /* Text on primary color */
+  --secondary: oklch(0.97 0 0);                /* Secondary background */
+  --secondary-foreground: oklch(0.205 0 0);    /* Secondary text color */
+  --muted: oklch(0.97 0 0);                    /* Muted background */
+  --muted-foreground: oklch(0.556 0 0);        /* Muted text color */
+  --accent: oklch(0.97 0 0);                   /* Accent background */
+  --accent-foreground: oklch(0.205 0 0);       /* Accent text color */
+  --destructive: oklch(0.577 0.245 27.325);    /* Error/destructive color */
+  --border: oklch(0.922 0 0);                  /* Border color */
+  --input: oklch(0.922 0 0);                   /* Input border color */
+  --ring: oklch(0.708 0 0);                    /* Focus ring color */
+  
+  /* Chart Colors for Data Visualization */
+  --chart-1: oklch(0.646 0.222 41.116);       /* Chart color 1 */
+  --chart-2: oklch(0.6 0.118 184.704);        /* Chart color 2 */
+  --chart-3: oklch(0.398 0.07 227.392);       /* Chart color 3 */
+  --chart-4: oklch(0.828 0.189 84.429);       /* Chart color 4 */
+  --chart-5: oklch(0.769 0.188 70.08);        /* Chart color 5 */
+  
+  /* Sidebar Component Colors */
+  --sidebar: oklch(0.985 0 0);                 /* Sidebar background */
+  --sidebar-foreground: oklch(0.145 0 0);      /* Sidebar text color */
+  --sidebar-primary: oklch(0.205 0 0);         /* Sidebar primary color */
+  --sidebar-primary-foreground: oklch(0.985 0 0); /* Sidebar primary text */
+  --sidebar-accent: oklch(0.97 0 0);           /* Sidebar accent background */
+  --sidebar-accent-foreground: oklch(0.205 0 0); /* Sidebar accent text */
+  --sidebar-border: oklch(0.922 0 0);          /* Sidebar border color */
+  --sidebar-ring: oklch(0.708 0 0);            /* Sidebar focus ring */
 }
 
+/**
+ * Tailwind CSS Theme Configuration
+ * 
+ * Maps CSS custom properties to Tailwind CSS theme tokens.
+ * This enables the use of design system variables in Tailwind utility classes.
+ */
 @theme inline {
+  /* Color Mappings */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-primary: var(--primary);
   --color-cta: var(--cta);
   --color-cta-gold: var(--cta-gold);
+  
+  /* Font Family Mappings */
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --font-bricolage: "Bricolage Grotesque", sans-serif;
+  
+  /* Sidebar Color Mappings */
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -59,11 +107,15 @@
   --color-sidebar-primary: var(--sidebar-primary);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar: var(--sidebar);
+  
+  /* Chart Color Mappings */
   --color-chart-5: var(--chart-5);
   --color-chart-4: var(--chart-4);
   --color-chart-3: var(--chart-3);
   --color-chart-2: var(--chart-2);
   --color-chart-1: var(--chart-1);
+  
+  /* UI Element Color Mappings */
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
@@ -79,306 +131,447 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+  
+  /* Border Radius Mappings */
+  --radius-sm: calc(var(--radius) - 4px);  /* Small radius (6px) */
+  --radius-md: calc(var(--radius) - 2px);  /* Medium radius (8px) */
+  --radius-lg: var(--radius);              /* Large radius (10px) */
+  --radius-xl: calc(var(--radius) + 4px);  /* Extra large radius (14px) */
 }
 
+/**
+ * Global Body Styles
+ * 
+ * Sets the default font family for the entire application.
+ */
 body {
-  font-family: var(--font-bricolage);
+  font-family: var(--font-bricolage); /* Apply Bricolage Grotesque font globally */
 }
 
+/**
+ * Dark Theme Color Overrides
+ * 
+ * Redefines color variables for dark mode to ensure proper contrast
+ * and accessibility. Uses OKLCH color space for consistent color relationships.
+ */
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  /* Core Dark Theme Colors */
+  --background: oklch(0.145 0 0);          /* Dark background */
+  --foreground: oklch(0.985 0 0);          /* Light text on dark background */
+  --card: oklch(0.205 0 0);                /* Dark card background */
+  --card-foreground: oklch(0.985 0 0);     /* Light text on dark cards */
+  --popover: oklch(0.205 0 0);             /* Dark popover background */
+  --popover-foreground: oklch(0.985 0 0);  /* Light text on dark popovers */
+  --primary: oklch(0.922 0 0);             /* Light primary color for dark theme */
+  --primary-foreground: oklch(0.205 0 0);  /* Dark text on light primary */
+  --secondary: oklch(0.269 0 0);           /* Dark secondary background */
+  --secondary-foreground: oklch(0.985 0 0); /* Light text on dark secondary */
+  --muted: oklch(0.269 0 0);               /* Dark muted background */
+  --muted-foreground: oklch(0.708 0 0);    /* Muted text color */
+  --accent: oklch(0.269 0 0);              /* Dark accent background */
+  --accent-foreground: oklch(0.985 0 0);   /* Light text on dark accent */
+  --destructive: oklch(0.704 0.191 22.216); /* Error color for dark theme */
+  --border: oklch(1 0 0 / 10%);            /* Subtle borders with transparency */
+  --input: oklch(1 0 0 / 15%);             /* Input borders with transparency */
+  --ring: oklch(0.556 0 0);                /* Focus ring color */
+  
+  /* Dark Theme Chart Colors */
+  --chart-1: oklch(0.488 0.243 264.376);   /* Chart color 1 - dark theme */
+  --chart-2: oklch(0.696 0.17 162.48);     /* Chart color 2 - dark theme */
+  --chart-3: oklch(0.769 0.188 70.08);     /* Chart color 3 - dark theme */
+  --chart-4: oklch(0.627 0.265 303.9);     /* Chart color 4 - dark theme */
+  --chart-5: oklch(0.645 0.246 16.439);    /* Chart color 5 - dark theme */
+  
+  /* Dark Theme Sidebar Colors */
+  --sidebar: oklch(0.205 0 0);             /* Dark sidebar background */
+  --sidebar-foreground: oklch(0.985 0 0);  /* Light sidebar text */
+  --sidebar-primary: oklch(0.488 0.243 264.376); /* Sidebar primary color */
+  --sidebar-primary-foreground: oklch(0.985 0 0); /* Light text on sidebar primary */
+  --sidebar-accent: oklch(0.269 0 0);      /* Dark sidebar accent */
+  --sidebar-accent-foreground: oklch(0.985 0 0); /* Light text on sidebar accent */
+  --sidebar-border: oklch(1 0 0 / 10%);    /* Subtle sidebar borders */
+  --sidebar-ring: oklch(0.556 0 0);        /* Sidebar focus ring */
 }
 
+/**
+ * Base Layer Styles
+ * 
+ * Fundamental styles that apply to base HTML elements.
+ * These styles establish the foundation for the entire application.
+ */
 @layer base {
+  /* Universal styles for all elements */
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border outline-ring/50; /* Consistent borders and focus outlines */
   }
+  
+  /* Global body styles */
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground; /* Apply theme colors to body */
   }
+  
+  /* Main content container */
   main {
     @apply mx-auto px-14 flex flex-col gap-8 bg-background h-full max-w-[1400px] pt-10 max-sm:px-2 mb-5;
+    /* Responsive layout with centered content, padding, and max-width */
   }
+  
+  /* Primary heading styles */
   h1 {
-    @apply text-3xl font-bold;
+    @apply text-3xl font-bold; /* Large, bold headings */
   }
 }
 
+/**
+ * Component Layer Styles
+ * 
+ * Reusable component classes that can be applied throughout the application.
+ * These classes define the visual appearance and behavior of UI components.
+ */
 @layer components {
+  /* Homepage Layout Components */
   .home-section {
     @apply flex gap-4 justify-between items-start w-full max-lg:flex-col-reverse max-lg:items-center;
+    /* Responsive section layout that stacks on mobile */
   }
+  
+  /* Companion Grid and Card Components */
   .companions-grid {
     @apply flex flex-wrap gap-4 w-full max-md:justify-center justify-between;
+    /* Responsive grid layout for companion cards */
   }
+  
   .companion-card {
     @apply flex flex-col rounded-4xl border border-black px-4 py-4 gap-5 w-full min-lg:max-w-[410px] justify-between;
+    /* Individual companion card styling with rounded corners and spacing */
   }
+  
+  /* Badge and Label Components */
   .subject-badge {
     @apply bg-black text-white rounded-4xl text-sm px-2 py-1 capitalize;
+    /* Subject category badge with dark background */
   }
+  
+  /* Interactive Bookmark Component */
   .companion-bookmark {
     @apply px-2 bg-black rounded-4xl flex items-center h-full aspect-square cursor-pointer transition-all duration-200 ease-in-out;
+    /* Bookmark button with smooth transitions */
   }
   .companion-bookmark:hover {
-    @apply transform scale-110;
+    @apply transform scale-110; /* Scale up on hover */
   }
   .companion-bookmark:active {
-    @apply transform scale-95;
+    @apply transform scale-95; /* Scale down on click */
   }
   .companion-bookmark:disabled {
-    @apply cursor-not-allowed;
+    @apply cursor-not-allowed; /* Disabled state styling */
   }
+  
+  /* Form Input Components */
   .input {
     @apply !border-black !bg-white focus-visible:!ring-0 focus-visible:!border-black !w-full;
+    /* Custom input styling with black borders */
   }
+  
+  /* Utility Border Component */
   .rounded-border {
     @apply rounded-4xl border border-black;
+    /* Reusable rounded border utility */
   }
+  
+  /* Call-to-Action Components */
   .cta-section {
     @apply bg-cta text-white rounded-4xl px-7 py-10 flex flex-col items-center text-center gap-5 w-1/3 max-lg:w-1/2 max-md:w-full;
+    /* Responsive CTA section with dark background */
   }
+  
   .cta-badge {
     @apply bg-cta-gold rounded-4xl px-3 py-1.5 text-black;
+    /* Gold accent badge for CTA sections */
   }
+  
+  /* Button Components */
   .btn-primary {
     @apply bg-primary text-white rounded-xl cursor-pointer px-4 py-2 flex items-center gap-2;
+    /* Primary action button with brand color */
   }
-  .navbar {
-    @apply flex items-center justify-between mx-auto w-full px-14 py-4 bg-white max-sm:px-4;
-  }
+  
   .btn-signin {
     @apply border border-black rounded-4xl px-4 py-2.5 text-sm font-semibold flex items-center gap-2 cursor-pointer;
+    /* Sign-in button with outlined style */
   }
+  
+  /* Navigation Components */
+  .navbar {
+    @apply flex items-center justify-between mx-auto w-full px-14 py-4 bg-white max-sm:px-4;
+    /* Main navigation bar with responsive padding */
+  }
+  
+  /* List and Container Components */
   .companion-list {
     @apply rounded-4xl border border-black px-7 pt-7 pb-10 max-lg:w-full bg-white;
+    /* Container for companion lists with padding and borders */
   }
+  
   .companion-limit {
     @apply items-center justify-center flex flex-col gap-4 w-full min-2xl:w-1/2 pt-20 text-center;
+    /* Layout for companion limit messaging */
   }
 
+  /* Chat Interface Components */
   .companion-section {
     @apply border-2 border-orange-500 w-2/3 max-sm:w-full flex flex-col gap-4 justify-center items-center rounded-lg;
+    /* Main companion display area with orange accent border */
   }
 
   .companion-avatar {
     @apply size-[300px] flex items-center justify-center rounded-lg max-sm:size-[100px] mt-4;
+    /* Large companion avatar container with responsive sizing */
   }
+  
   .companion-lottie {
     @apply size-[300px] max-sm:size-[100px];
+    /* Lottie animation container matching avatar size */
   }
 
+  /* User Interface Components */
   .user-section {
     @apply flex flex-col gap-4 w-1/3 max-sm:w-full max-sm:flex-row;
+    /* User controls section with responsive layout */
   }
+  
   .user-avatar {
     @apply border-2 border-black flex flex-col gap-4 items-center rounded-lg py-8 max-sm:hidden;
+    /* User avatar display (hidden on mobile) */
   }
 
   .btn-mic {
     @apply border-2 border-black rounded-lg flex flex-col gap-2 items-center py-8 max-sm:py-2 cursor-pointer w-full;
+    /* Microphone button with responsive padding */
   }
 
+  /* Transcript Display Components */
   .transcript {
     @apply relative flex flex-col gap-4 w-full items-center pt-10 flex-grow overflow-hidden;
+    /* Main transcript container with overflow handling */
   }
+  
   .transcript-message {
     @apply overflow-y-auto w-full flex flex-col gap-4 max-sm:gap-2 pr-2 h-full text-2xl;
+    /* Scrollable message container with large text */
   }
+  
   .transcript-fade {
     @apply pointer-events-none absolute bottom-0 left-0 right-0 h-40 max-sm:h-20 bg-gradient-to-t from-background via-background/90 to-transparent z-10;
+    /* Fade effect at bottom of transcript for visual continuity */
   }
 }
 
+/**
+ * Utilities Layer
+ * 
+ * Utility classes for common functionality like hiding scrollbars.
+ */
 @layer utilities {
+  /* Hide scrollbars while maintaining scroll functionality */
   .no-scrollbar::-webkit-scrollbar {
-    display: none;
+    display: none; /* Hide scrollbar in WebKit browsers */
   }
   .no-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+    -ms-overflow-style: none; /* Hide scrollbar in IE/Edge */
+    scrollbar-width: none; /* Hide scrollbar in Firefox */
   }
 }
+
+/**
+ * Animation Keyframes and Classes
+ * 
+ * Custom animations for interactive elements and feedback.
+ */
 
 /* Bookmark Animation */
 @keyframes bookmarkPulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.2); }
-  100% { transform: scale(1); }
+  0% { transform: scale(1); } /* Start at normal size */
+  50% { transform: scale(1.2); } /* Scale up to 120% */
+  100% { transform: scale(1); } /* Return to normal size */
 }
 
 .bookmark-success {
-  animation: bookmarkPulse 0.3s ease;
+  animation: bookmarkPulse 0.3s ease; /* Apply pulse animation on bookmark success */
 }
 
-/* Navigation Items Styles */
+/**
+ * Navigation Component Styles
+ * 
+ * Comprehensive styling for navigation items with interactive states.
+ */
+
+/* Base Navigation Item Styles */
 .nav-item {
   @apply px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ease-in-out;
-  @apply relative overflow-hidden;
-  @apply border border-transparent;
-  @apply focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2;
+  @apply relative overflow-hidden; /* Prepare for potential animations */
+  @apply border border-transparent; /* Invisible border for consistent sizing */
+  @apply focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2; /* Accessibility focus styles */
 }
 
+/* Active Navigation Item State */
 .nav-item-active {
-  @apply text-primary bg-primary/10 border-primary/20;
-  @apply shadow-sm;
+  @apply text-primary bg-primary/10 border-primary/20; /* Primary color theme */
+  @apply shadow-sm; /* Subtle elevation */
 }
 
+/* Inactive Navigation Item State */
 .nav-item-inactive {
-  @apply text-muted-foreground;
+  @apply text-muted-foreground; /* Muted text for inactive items */
 }
 
+/* Navigation Item Hover Effects */
 .nav-item:hover {
-  @apply transform scale-105 shadow-md;
-  @apply bg-accent/50 text-accent-foreground;
-  @apply border-accent/30;
+  @apply transform scale-105 shadow-md; /* Scale up with shadow on hover */
+  @apply bg-accent/50 text-accent-foreground; /* Accent color background */
+  @apply border-accent/30; /* Accent border */
 }
 
+/* Navigation Item Active Press State */
 .nav-item:active {
-  @apply transform scale-95;
-  @apply bg-accent/70;
+  @apply transform scale-95; /* Scale down on press */
+  @apply bg-accent/70; /* Darker accent background */
 }
 
+/* Hovered State Class */
 .nav-item-hovered {
-  @apply bg-accent/30;
+  @apply bg-accent/30; /* Light accent background for programmatic hover */
 }
 
-/* Mobile responsive navigation */
+/* Mobile Responsive Navigation */
 @media (max-width: 640px) {
   .nav-item {
-    @apply px-3 py-1.5 text-xs;
+    @apply px-3 py-1.5 text-xs; /* Smaller padding and text on mobile */
   }
 }
 
-/* Hamburger Menu Styles */
+/**
+ * Hamburger Menu Component Styles
+ * 
+ * Animated hamburger menu button for mobile navigation.
+ */
+
+/* Hamburger Button Container */
 .hamburger-btn {
   @apply p-2 rounded-lg transition-all duration-200 ease-in-out;
-  @apply hover:bg-accent/50 focus:outline-none focus:ring-2 focus:ring-primary;
-  @apply flex flex-col justify-center items-center w-10 h-10;
+  @apply hover:bg-accent/50 focus:outline-none focus:ring-2 focus:ring-primary; /* Interactive states */
+  @apply flex flex-col justify-center items-center w-10 h-10; /* Fixed size container */
 }
 
+/* Individual Hamburger Lines */
 .hamburger-line {
-  @apply w-6 h-0.5 bg-foreground transition-all duration-300 ease-in-out;
-  @apply my-0.5;
-  transform-origin: center;
+  @apply w-6 h-0.5 bg-foreground transition-all duration-300 ease-in-out; /* Line styling with smooth transitions */
+  @apply my-0.5; /* Vertical spacing between lines */
+  transform-origin: center; /* Set rotation point to center */
 }
 
+/* Hamburger Animation States (Open) */
 .hamburger-line-1-open {
-  transform: translateY(6px) rotate(45deg);
+  transform: translateY(6px) rotate(45deg); /* Top line: move down and rotate */
 }
 
 .hamburger-line-2-open {
-  transform: scale(0);
-  opacity: 0;
+  transform: scale(0); /* Middle line: scale to invisible */
+  opacity: 0; /* Fade out middle line */
 }
 
 .hamburger-line-3-open {
-  transform: translateY(-6px) rotate(-45deg);
+  transform: translateY(-6px) rotate(-45deg); /* Bottom line: move up and rotate */
 }
 
-/* Mobile Menu Dropdown */
+/**
+ * Mobile Menu Dropdown Component
+ * 
+ * Animated dropdown menu for mobile navigation with slide-in effect.
+ */
+
+/* Mobile Menu Container */
 .mobile-menu {
-  @apply absolute top-full right-0 mt-2 w-48;
-  @apply bg-background border border-border rounded-lg shadow-lg;
-  @apply z-50;
-  animation: mobileMenuSlideIn 0.2s ease-out;
+  @apply absolute top-full right-0 mt-2 w-48; /* Positioned dropdown */
+  @apply bg-background border border-border rounded-lg shadow-lg; /* Styled container */
+  @apply z-50; /* High z-index to appear above other content */
+  animation: mobileMenuSlideIn 0.2s ease-out; /* Smooth slide-in animation */
 }
 
+/* Mobile Navigation Item Base */
 .mobile-nav-item {
-  @apply block px-4 py-2 text-sm;
-  @apply transition-colors duration-150;
+  @apply block px-4 py-2 text-sm; /* Block layout with padding */
+  @apply transition-colors duration-150; /* Smooth color transitions */
 }
 
+/* Active Mobile Navigation Item */
 .mobile-nav-item-active {
-  @apply text-primary font-semibold;
+  @apply text-primary font-semibold; /* Primary color and bold text */
 }
 
+/* Inactive Mobile Navigation Item */
 .mobile-nav-item-inactive {
-  @apply text-muted-foreground hover:text-foreground hover:bg-accent/50;
+  @apply text-muted-foreground hover:text-foreground hover:bg-accent/50; /* Muted with hover effects */
 }
 
+/* Mobile Menu Slide-in Animation */
 @keyframes mobileMenuSlideIn {
   from {
-    opacity: 0;
-    transform: translateY(-10px);
+    opacity: 0; /* Start invisible */
+    transform: translateY(-10px); /* Start slightly above */
   }
   to {
-    opacity: 1;
-    transform: translateY(0);
+    opacity: 1; /* End fully visible */
+    transform: translateY(0); /* End at normal position */
   }
 }
 
-/* Ensure mobile menu positioning */
+/* Ensure Mobile Menu Positioning */
 .md\:hidden {
-  @apply relative;
+  @apply relative; /* Relative positioning for dropdown context */
 }
 
-/* Skeleton Loading Animation */
+/**
+ * Skeleton Loading Animations
+ * 
+ * Loading state animations for better user experience during data fetching.
+ */
+
+/* Shimmer Animation Keyframes */
 @keyframes shimmer {
   0% {
-    background-position: -200px 0;
+    background-position: -200px 0; /* Start shimmer off-screen left */
   }
   100% {
-    background-position: calc(200px + 100%) 0;
+    background-position: calc(200px + 100%) 0; /* End shimmer off-screen right */
   }
 }
 
+/* Light Theme Skeleton Shimmer */
 .skeleton-shimmer {
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-  background-size: 200px 100%;
-  animation: shimmer 1.5s infinite;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%); /* Light gradient */
+  background-size: 200px 100%; /* Shimmer effect size */
+  animation: shimmer 1.5s infinite; /* Continuous shimmer animation */
 }
 
+/* Dark Theme Skeleton Shimmer */
 .dark .skeleton-shimmer {
-  background: linear-gradient(90deg, #2a2a2a 25%, #3a3a3a 50%, #2a2a2a 75%);
-  background-size: 200px 100%;
-  animation: shimmer 1.5s infinite;
+  background: linear-gradient(90deg, #2a2a2a 25%, #3a3a3a 50%, #2a2a2a 75%); /* Dark gradient */
+  background-size: 200px 100%; /* Shimmer effect size */
+  animation: shimmer 1.5s infinite; /* Continuous shimmer animation */
 }
 
-/* Enhanced skeleton pulse animation */
+/* Enhanced Skeleton Pulse Animation */
 .skeleton-pulse {
-  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; /* Smooth pulse effect */
 }
 
+/* Pulse Animation Keyframes */
 @keyframes pulse {
   0%, 100% {
-    opacity: 1;
+    opacity: 1; /* Full opacity at start and end */
   }
   50% {
-    opacity: 0.5;
+    opacity: 0.5; /* Half opacity at midpoint */
   }
 }

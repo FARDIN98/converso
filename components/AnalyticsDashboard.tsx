@@ -1,12 +1,46 @@
 'use client';
 
+/**
+ * React hooks for state management, memoization, and lifecycle management
+ */
 import { useEffect, useState, memo, useMemo, useCallback } from 'react';
+
+/**
+ * UI components for creating cards with headers, content, and descriptions
+ */
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+
+/**
+ * Skeleton component for loading states and placeholder content
+ */
 import { Skeleton } from '@/components/ui/skeleton';
+
+/**
+ * Server actions for fetching user analytics data and session trends
+ */
 import { getUserAnalytics, getSessionTrends } from '@/lib/actions/analytics.actions';
+
+/**
+ * Lucide React icons for analytics dashboard UI elements
+ */
 import { BarChart3, BookOpen, TrendingUp, Bookmark } from "lucide-react";
+
+/**
+ * Recharts components for creating interactive charts and data visualizations
+ */
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 
+/**
+ * Interface for analytics data structure containing user statistics
+ * @interface AnalyticsData
+ * @property {number} totalSessions - Total number of learning sessions completed
+ * @property {number} totalCompanions - Total number of AI companions created
+ * @property {number} totalBookmarks - Total number of bookmarked companions
+ * @property {Record<string, number>} subjectStats - Statistics grouped by subject
+ * @property {number} recentSessions - Number of recent sessions (typically this week)
+ * @property {unknown[]} sessionsData - Raw session data for additional processing
+ * @property {unknown[]} companionsData - Raw companion data for additional processing
+ */
 interface AnalyticsData {
     totalSessions: number;
     totalCompanions: number;
@@ -17,17 +51,39 @@ interface AnalyticsData {
     companionsData: unknown[];
 }
 
+/**
+ * Interface for trend data used in line charts
+ * @interface TrendData
+ * @property {string} date - Date in string format for the data point
+ * @property {number} sessions - Number of sessions for that date
+ */
 interface TrendData {
     date: string;
     sessions: number;
 }
 
+/**
+ * Interface for subject distribution data used in pie charts
+ * @interface SubjectData
+ * @property {string} subject - Subject name (e.g., 'Math', 'Science')
+ * @property {number} sessions - Number of sessions for this subject
+ * @property {string} fill - Hex color code for chart visualization
+ */
 interface SubjectData {
     subject: string;
     sessions: number;
     fill: string;
 }
 
+/**
+ * Interface for statistics card data
+ * @interface StatData
+ * @property {string} title - Display title for the statistic
+ * @property {number} value - Numeric value to display
+ * @property {string} description - Description text for the statistic
+ * @property {React.ComponentType<{ className?: string }>} icon - Lucide icon component
+ * @property {string} change - Change indicator text (e.g., '+5 this week')
+ */
 interface StatData {
     title: string;
     value: number;
@@ -36,27 +92,72 @@ interface StatData {
     change: string;
 }
 
+/**
+ * Props interface for the AnalyticsDashboard component
+ * @interface AnalyticsDashboardProps
+ * @property {string} userId - Unique identifier for the user whose analytics to display
+ */
 interface AnalyticsDashboardProps {
     userId: string;
 }
 
+/**
+ * Color mapping for different subjects used in charts and visualizations
+ * Each subject has a unique color to maintain consistency across the dashboard
+ * @constant {Record<string, string>} COLORS
+ */
 const COLORS = {
-    maths: '#3B82F6',
-    science: '#10B981',
-    language: '#F59E0B',
-    history: '#EF4444',
-    coding: '#8B5CF6',
-    geography: '#06B6D4',
-    economics: '#F97316',
-    finance: '#84CC16',
-    business: '#EC4899'
+    maths: '#3B82F6',      // Blue - for mathematics
+    science: '#10B981',    // Green - for science subjects
+    language: '#F59E0B',   // Amber - for language studies
+    history: '#EF4444',    // Red - for history
+    coding: '#8B5CF6',     // Purple - for programming/coding
+    geography: '#06B6D4',  // Cyan - for geography
+    economics: '#F97316',  // Orange - for economics
+    finance: '#84CC16',    // Lime - for finance
+    business: '#EC4899'    // Pink - for business studies
 };
 
+/**
+ * AnalyticsDashboard Component
+ * 
+ * A comprehensive analytics dashboard that displays user learning statistics,
+ * session trends, subject distribution, and personalized insights.
+ * 
+ * Features:
+ * - Real-time analytics data fetching
+ * - Interactive charts (line charts, pie charts)
+ * - Loading states with skeleton components
+ * - Responsive design with gradient styling
+ * - Memoized performance optimization
+ * - Error handling and fallback states
+ * 
+ * @component
+ * @param {AnalyticsDashboardProps} props - Component props
+ * @param {string} props.userId - User ID for fetching analytics data
+ * @returns {JSX.Element} Rendered analytics dashboard
+ * 
+ * @example
+ * ```tsx
+ * <AnalyticsDashboard userId="user123" />
+ * ```
+ */
 const AnalyticsDashboard = memo(({ userId }: AnalyticsDashboardProps) => {
+    // State for storing user analytics data (sessions, companions, bookmarks, etc.)
     const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
+    
+    // State for storing session trend data for line chart visualization
     const [trends, setTrends] = useState<TrendData[]>([]);
+    
+    // Loading state to show skeleton components while data is being fetched
     const [loading, setLoading] = useState(true);
 
+    /**
+     * Fetches analytics data and session trends for the user
+     * Handles loading states and error management
+     * @async
+     * @function fetchAnalytics
+     */
     const fetchAnalytics = useCallback(async () => {
         try {
             setLoading(true);
@@ -73,11 +174,16 @@ const AnalyticsDashboard = memo(({ userId }: AnalyticsDashboardProps) => {
         }
     }, [userId]);
 
+    // Fetch analytics data when component mounts or userId changes
     useEffect(() => {
         fetchAnalytics();
     }, [fetchAnalytics]);
 
-    // Prepare data for charts with memoization - moved to top level
+    /**
+     * Memoized subject distribution data for pie chart
+     * Converts subject statistics into chart-ready format with colors
+     * @returns {SubjectData[]} Array of subject data with colors for pie chart
+     */
     const subjectData: SubjectData[] = useMemo(() => {
         if (!analytics) return [];
         return Object.entries(analytics.subjectStats).map(([subject, count]) => ({
@@ -87,6 +193,11 @@ const AnalyticsDashboard = memo(({ userId }: AnalyticsDashboardProps) => {
         }));
     }, [analytics]);
 
+    /**
+     * Memoized statistics data for the overview cards
+     * Transforms raw analytics data into display-ready format
+     * @returns {StatData[]} Array of statistics for overview cards
+     */
     const stats: StatData[] = useMemo(() => {
         if (!analytics) return [];
         return [
@@ -121,6 +232,7 @@ const AnalyticsDashboard = memo(({ userId }: AnalyticsDashboardProps) => {
         ];
     }, [analytics]);
 
+    // Show loading skeleton while data is being fetched
     if (loading) {
         return (
             <div className="space-y-6">
@@ -194,6 +306,7 @@ const AnalyticsDashboard = memo(({ userId }: AnalyticsDashboardProps) => {
         );
     }
 
+    // Show error message if analytics data failed to load
     if (!analytics) {
         return (
             <div className="text-center py-8">
@@ -202,9 +315,10 @@ const AnalyticsDashboard = memo(({ userId }: AnalyticsDashboardProps) => {
         );
     }
 
+    // Render the complete analytics dashboard
     return (
         <div className="space-y-6">
-            {/* Stats Cards */}
+            {/* Overview Statistics Cards - displays key metrics in a responsive grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {stats.map((stat, index) => {
                     const Icon = stat.icon;
@@ -242,9 +356,9 @@ const AnalyticsDashboard = memo(({ userId }: AnalyticsDashboardProps) => {
                 })}
             </div>
 
-            {/* Charts */}
+            {/* Charts Section - displays session trends and subject distribution */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Session Trends */}
+                {/* Session Trends Chart - Line chart showing learning activity over time */}
                 <Card className="hover:shadow-lg transition-all duration-300 border-2 border-slate-200/50 dark:border-slate-700/50 bg-gradient-to-br from-slate-50/50 to-white dark:from-slate-900/50 dark:to-slate-800/50">
                     <CardHeader className="pb-4">
                         <CardTitle className="text-xl font-bold flex items-center gap-2">
@@ -258,18 +372,24 @@ const AnalyticsDashboard = memo(({ userId }: AnalyticsDashboardProps) => {
                     <CardContent>
                         <div className="h-[300px]">
                             {trends.length > 0 ? (
+                                /* Responsive container for line chart */
                                 <ResponsiveContainer width="100%" height="100%">
                                     <LineChart data={trends}>
+                                        {/* Grid lines for better readability */}
                                         <CartesianGrid strokeDasharray="3 3" />
+                                        {/* X-axis showing dates */}
                                         <XAxis 
                                             dataKey="date" 
                                             tickFormatter={(value) => new Date(value).toLocaleDateString('en-US', { weekday: 'short' })}
                                         />
+                                        {/* Y-axis showing session counts */}
                                         <YAxis />
+                                        {/* Interactive tooltip on hover */}
                                         <Tooltip 
                                             labelFormatter={(value) => new Date(value).toLocaleDateString()}
                                             formatter={(value) => [value, 'Sessions']}
                                         />
+                                        {/* Main trend line with interactive dots */}
                                         <Line 
                                             type="monotone" 
                                             dataKey="sessions" 
@@ -288,7 +408,7 @@ const AnalyticsDashboard = memo(({ userId }: AnalyticsDashboardProps) => {
                     </CardContent>
                 </Card>
 
-                {/* Subject Distribution */}
+                {/* Subject Distribution Chart - Pie chart showing learning focus by subject */}
                  <Card className="hover:shadow-lg transition-all duration-300 border-2 border-slate-200/50 dark:border-slate-700/50 bg-gradient-to-br from-slate-50/50 to-white dark:from-slate-900/50 dark:to-slate-800/50">
                     <CardHeader className="pb-4">
                         <CardTitle className="text-xl font-bold flex items-center gap-2">
@@ -300,8 +420,10 @@ const AnalyticsDashboard = memo(({ userId }: AnalyticsDashboardProps) => {
                     <CardContent>
                         <div className="h-[300px]">
                             {subjectData.length > 0 ? (
+                                /* Responsive container for pie chart */
                                 <ResponsiveContainer width="100%" height="100%">
                                     <PieChart>
+                                        {/* Pie chart with session count labels */}
                                         <Pie
                                             data={subjectData}
                                             cx="50%"
@@ -314,10 +436,12 @@ const AnalyticsDashboard = memo(({ userId }: AnalyticsDashboardProps) => {
                                             fill="#8884d8"
                                             dataKey="sessions"
                                         >
+                                            {/* Apply custom colors to each pie slice */}
                                             {subjectData.map((entry, index) => (
                                                 <Cell key={`cell-${index}`} fill={entry.fill} />
                                             ))}
                                         </Pie>
+                                        {/* Interactive tooltip showing detailed information */}
                                         <Tooltip formatter={(value) => [value, 'Sessions']} />
                                     </PieChart>
                                 </ResponsiveContainer>
